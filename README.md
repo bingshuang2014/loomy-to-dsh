@@ -85,31 +85,9 @@ pnpm install
 - **工具调用**：模型声明 `function_calling` 的支持 OpenAI tools/tool_choice。
 - **图片输入**：声明 `vision` 的模型（DeepSeek-V4.1-Flash、GLM-5.3-Flash、qwen3.8-flash、MiniMax-M3、Kimi-k2.6、MiMo-v2.5）支持图片输入；纯文字模型（qwen-3.8-max、Spark 系列）不会收到图片。
 - **推理档位**：上游声明的档位（`none`/`low`/`medium`/`high`/`xhigh`）直接显示。`none` 映射为「关闭思考」。
-- **积分显示**：状态路由返回积分信息（永久积分 + 每日赠送），Cookie 有效期至 2026-11-11。
+- **积分显示**：状态路由返回积分信息（永久积分 + 每日赠送），数据来自 Loomy 网页版。
 - **模型显隐**：`~/.dsh/.loomy-visibility.json` 按账号（userid）保存隐藏列表；切换账号自动切换各自配置。
 - **目录持久化**：`~/.dsh/.loomy-catalog.json` 保存上次成功的目录，重启先服务它再后台刷新。
-
-## 积分查询
-
-插件通过 Loomy 网页版 API 查询积分：
-
-- **端点**：`POST https://loomy.xunfei.cn/web/api/auth/points-summary`
-- **认证**：Cookie `loomy_web_session=xxx`（硬编码在 `status-route.js`，有效期至 2026-11-11）
-- **返回**：`{ permanent: 1000, daily: 4610, total: 5610 }`
-
-状态路由 `/loomy-to-dsh/status` 返回的 `credits` 字段：
-
-```json
-{
-  "credits": {
-    "permanent": 1000,
-    "daily": 4610,
-    "total": 5610
-  }
-}
-```
-
-**注意**：Cookie 过期后 `credits` 返回 `null`，需重新从 `loomy-credits-watch.py` 提取新 cookie。
 
 ## 配置（可选）
 
