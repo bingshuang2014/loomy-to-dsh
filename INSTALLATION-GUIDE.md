@@ -104,7 +104,7 @@ export async function apply(ctx) {
 **验证方法**：
 ```bash
 # profile 根目录的 node_modules
-Get-ChildItem C:\Users\12973\.dsh\profiles\desktop\node_modules\@deepseek-ai
+Get-ChildItem C:\Users\<你>\.dsh\profiles\desktop\node_modules\@deepseek-ai
 # 输出只有：cosmokit, schemastery
 # 其他（dsh-llm, cordis 等）全缺失 → 宿主注入
 ```
@@ -117,20 +117,20 @@ Get-ChildItem C:\Users\12973\.dsh\profiles\desktop\node_modules\@deepseek-ai
 
 **症状**：
 ```
-ENOENT ENOENT: no such file or directory, scandir 'C:\Users\12973\.dsh\profiles\desktop\D:\0data\0dsh\bobcfcAgents\plugin'
+ENOENT ENOENT: no such file or directory, scandir 'C:\Users\<你>\.dsh\profiles\desktop\D:\<你的路径>\0dsh\bobcfcAgents\plugin'
 ```
 
 **根因**：pnpm 10.33 在 Windows 上把 `file:D:/path` 当成相对路径，拼到 cwd 后面。
 
 **解决**：改用反斜杠
 ```json
-"loomy-to-dsh": "file:D:\\0data\\0dsh\\loomy-to-dsh"
+"loomy-to-dsh": "file:D:\\<你的路径>\\0dsh\\loomy-to-dsh"
 ```
 
 **验证**：在 scratch 目录快速测试
 ```bash
 mkdir test && cd test
-'{"name":"t","dependencies":{"loomy-to-dsh":"file:D:\\0data\\0dsh\\loomy-to-dsh"}}' > package.json
+'{"name":"t","dependencies":{"loomy-to-dsh":"file:D:\\<你的路径>\\0dsh\\loomy-to-dsh"}}' > package.json
 pnpm install  # 成功
 ```
 
@@ -218,7 +218,7 @@ node -e "const p=require('C:/Users/12973/.dsh/profiles/desktop/node_modules/dsh-
 **验证**：
 ```bash
 # 对照其他插件
-Get-Content C:\Users\12973\.dsh\profiles\desktop\node_modules\dsh-browser\package.json | Select-String '"dsh"'
+Get-Content C:\Users\<你>\.dsh\profiles\desktop\node_modules\dsh-browser\package.json | Select-String '"dsh"'
 # 所有插件都有这个字段
 ```
 
@@ -229,19 +229,19 @@ Get-Content C:\Users\12973\.dsh\profiles\desktop\node_modules\dsh-browser\packag
 ### ❌ 错误方式（会丢 file: 依赖）
 
 ```bash
-cd C:\Users\12973\.dsh\profiles\desktop
+cd C:\Users\<你>\.dsh\profiles\desktop
 pnpm install  # 反复跑会重建 node_modules，丢掉 file: 依赖
 ```
 
 ### ✅ 正确方式（手动复制）
 
 ```powershell
-$nm = "C:\Users\12973\.dsh\profiles\desktop\node_modules"
+$nm = "C:\Users\<你>\.dsh\profiles\desktop\node_modules"
 
 # 1. 修复 package.json（加 dsh 字段）
 # 2. 直接复制到 node_modules（模拟 hoisted linker 结果）
-robocopy "D:\0data\0dsh\bobcfcAgents\plugin" "$nm\dsh-bobcfc-agents" /MIR /NFL /NDL /NJH /NJS /NP
-robocopy "D:\0data\0dsh\loomy-to-dsh"    "$nm\loomy-to-dsh"    /MIR /XD research /XF diag.mjs
+robocopy "D:\<你的路径>\0dsh\bobcfcAgents\plugin" "$nm\dsh-bobcfc-agents" /MIR /NFL /NDL /NJH /NJS /NP
+robocopy "D:\<你的路径>\0dsh\loomy-to-dsh"    "$nm\loomy-to-dsh"    /MIR /XD research /XF diag.mjs
 
 # 3. 校验
 node -e "const p=require('C:/Users/12973/.dsh/profiles/desktop/node_modules/loomy-to-dsh/package.json');console.log(JSON.stringify(p.dsh))"
@@ -251,7 +251,7 @@ node -e "const p=require('C:/Users/12973/.dsh/profiles/desktop/node_modules/loom
 
 ```powershell
 # 文件数对比
-(Get-ChildItem "D:\0data\0dsh\loomy-to-dsh" -Recurse -File | Measure-Object).Count
+(Get-ChildItem "D:\<你的路径>\0dsh\loomy-to-dsh" -Recurse -File | Measure-Object).Count
 (Get-ChildItem "$nm\loomy-to-dsh" -Recurse -File | Measure-Object).Count
 
 # JSON 解析
@@ -352,19 +352,19 @@ node -e "import z from '@deepseek-ai/schemastery';console.log('z.object:',typeof
 ## 8. 恢复命令（万一被 pnpm 搞坏了）
 
 ```powershell
-$nm = "C:\Users\12973\.dsh\profiles\desktop\node_modules"
+$nm = "C:\Users\<你>\.dsh\profiles\desktop\node_modules"
 
 # bobcfc
-robocopy "D:\0data\0dsh\bobcfcAgents\plugin" "$nm\dsh-bobcfc-agents" /MIR /NFL /NDL /NJH /NJS /NP
+robocopy "D:\<你的路径>\0dsh\bobcfcAgents\plugin" "$nm\dsh-bobcfc-agents" /MIR /NFL /NDL /NJH /NJS /NP
 
 # loomy
-robocopy "D:\0data\0dsh\loomy-to-dsh" "$nm\loomy-to-dsh" /MIR /XD research /XF diag.mjs /NFL /NDL /NJH /NJS /NP
+robocopy "D:\<你的路径>\0dsh\loomy-to-dsh" "$nm\loomy-to-dsh" /MIR /XD research /XF diag.mjs /NFL /NDL /NJH /NJS /NP
 
 # 验证
 Get-ChildItem $nm | Where-Object { $_.Name -in 'dsh-bobcfc-agents','loomy-to-dsh','dsh-workbuddy-connect' } | Select-Object Name
 ```
 
-**备份位置**：`C:\Users\12973\.dsh\profiles\desktop\.backup-loomy-20261021-162104\`
+**备份位置**：`C:\Users\<你>\.dsh\profiles\desktop\.backup-loomy-20261021-162104\`
 
 ---
 

@@ -53,7 +53,7 @@
 ### 1. 初始化 Git 仓库
 
 ```bash
-cd D:\0data\0dsh\loomy-to-dsh
+cd D:\<你的路径>\0dsh\loomy-to-dsh
 git init
 git add .
 git commit -m "Initial release: loomy-to-dsh v0.1.0
