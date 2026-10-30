@@ -1,0 +1,67 @@
+{
+  "dependencies": {
+    "@earendil-works/pi-ai": "1.3.0"
+  },
+  "description": "将讯飞 Loomy 桌面 App 已登录账号可用的模型（DeepSeek-V4.1-Flash / Kimi / GLM / qwen3.8 / Spark / MiniMax 等）零配置接入 DeepSeek Harness。",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-api-session-controller",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-model-selection",
+        "@deepseek-ai/dsh-client-locale"
+      ],
+      "platform": "web"
+    }
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "adapter.js",
+    "catalog.js",
+    "loopback.js",
+    "session.js",
+    "shim.js",
+    "upstream.js",
+    "visibility.js",
+    "status-route.js",
+    "version.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "test/"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "deepseek",
+    "loomy",
+    "xunfei",
+    "model-provider"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "loomy-to-dsh",
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "type": "module",
+  "version": "2.1.0",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-llm": "*",
+    "@deepseek-ai/dsh-llm-pi-ai": "*",
+    "@deepseek-ai/schemastery": "^3.18.5"
+  }
+}

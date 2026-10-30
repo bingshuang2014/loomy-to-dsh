@@ -1,0 +1,7 @@
+# Register the Loomy provider without changing the profile's current default
+# model. The plugin reuses the Loomy desktop app's sign-in (its on-disk
+# session token); no separate OAuth flow is started.
+- insert:
+    - id: llm-loomy
+      name: loomy-to-dsh
+
