@@ -4,8 +4,11 @@
  * Renders a credits badge in the conversation input area (conversation.input.right
  * slot), polling the plugin's status route for live credit information.
  *
- * - Free models (rate = 0): query once, show "免费", stop polling
- * - Paid models (rate > 0): poll every 5 minutes
+ * - Renders "loomy 永久{permanent} 赠送{daily}" from the status route.
+ * - Hidden unless the session's current model belongs to the Loomy provider.
+ * - Read once on mount, again when the selected model changes, when a turn
+ *   finishes, and on the ↻ beside the badge — never on a timer: every status
+ *   GET also bills upstream, so the balance must not refresh behind the user.
  *
  * @module dsh-loomy-connect/client
  */
@@ -18,57 +21,47 @@ window.__ModuleLoader__.load({
     var React = require("react");
     var useState = React.useState;
     var useEffect = React.useEffect;
+    var useCallback = React.useCallback;
+    var useRef = React.useRef;
+    var useSyncExternalStore = React.useSyncExternalStore;
 
+    var LOOMY_PROVIDER = "loomy";
     var LOOMY_STATUS_PATH = "/loomy-to-dsh/status";
 
-    //#region styles
+﻿    //#region styles
+    /**
+     * The badge paints nothing of its own: transparent fill, no border, no hue —
+     * only the theme's own text tokens, so it follows the system appearance.
+     * The whole thing is the click target that re-reads the balance.
+     */
     var creditsBadgeStyle = {
-      display: "flex",
+      display: "inline-flex",
       alignItems: "center",
       gap: 6,
-      padding: "4px 12px",
-      borderRadius: 999,
+      padding: "2px 6px",
+      margin: 0,
+      border: "none",
+      background: "transparent",
+      font: "inherit",
       fontSize: 12,
       lineHeight: "20px",
-      background: "var(--dsw-alias-state-success-subtle, rgba(34, 160, 107, 0.12))",
       color: "var(--dsw-alias-text-primary)",
-      border: "1px solid var(--dsw-alias-state-success, rgba(34, 160, 107, 0.3))",
+      cursor: "pointer",
+      borderRadius: 6,
+      whiteSpace: "nowrap",
+      userSelect: "none",
     };
 
+    /** While a read is in flight the seat only fades; it never recolours. */
+    var busyBadgeStyle = Object.assign({}, creditsBadgeStyle, { opacity: 0.55 });
+
+    /** The name reads one step quieter than the numbers, both from the theme. */
     var creditsLabelStyle = {
       color: "var(--dsw-alias-label-secondary)",
-      fontWeight: 500,
     };
 
     var creditsValueStyle = {
-      color: "var(--dsw-alias-text-primary)",
-      fontWeight: 600,
-    };
-
-    var errorBadgeStyle = {
-      display: "flex",
-      alignItems: "center",
-      gap: 6,
-      padding: "4px 12px",
-      borderRadius: 999,
-      fontSize: 12,
-      lineHeight: "20px",
-      background: "var(--dsw-alias-state-warning-subtle, rgba(217, 119, 6, 0.12))",
-      color: "var(--dsw-alias-text-primary)",
-      border: "1px solid var(--dsw-alias-state-warning, rgba(217, 119, 6, 0.3))",
-    };
-
-    var freeBadgeStyle = {
-      display: "flex",
-      alignItems: "center",
-      gap: 6,
-      padding: "4px 12px",
-      borderRadius: 999,
-      fontSize: 12,
-      lineHeight: "20px",
-      background: "var(--dsw-alias-state-success-subtle, rgba(34, 160, 107, 0.12))",
-      color: "var(--dsw-alias-text-primary)",
-      border: "1px solid var(--dsw-alias-state-success, rgba(34, 160, 107, 0.3))",
+      color: "inherit",
     };
     //#endregion
 
@@ -76,11 +69,16 @@ window.__ModuleLoader__.load({
     /**
      * Fetch credits from the status route.
      */
-    async function fetchCredits() {
+    async function fetchCredits(signal) {
       try {
-        var response = await fetch(LOOMY_STATUS_PATH, {
+        var options = {
           headers: { Accept: "application/json" },
-        });
+          cache: "no-store",
+          credentials: "same-origin",
+        };
+        if (signal !== undefined) options.signal = signal;
+
+        var response = await fetch(LOOMY_STATUS_PATH, options);
 
         if (!response.ok) {
           return { error: "API 错误: " + response.status };
@@ -93,6 +91,7 @@ window.__ModuleLoader__.load({
             permanent: data.credits.permanent,
             daily: data.credits.daily,
             total: data.credits.total,
+            models: Array.isArray(data.models) ? data.models : [],
           };
         }
 
@@ -109,73 +108,144 @@ window.__ModuleLoader__.load({
 
     //#region LoomyCreditsBadge
     /**
-     * Credits badge component.
-     * - Free models (rate = 0): query once, show "免费", stop polling
-     * - Paid models (rate > 0): poll every 5 minutes
+     * Credits badge component: "loomy 永久{permanent} 赠送{daily}", with a ↻
+     * that re-reads on demand. Renders only while a Loomy model is selected.
+     * Re-reads on mount, on model change, and when a turn finishes — there is
+     * no interval, because every status GET also queries billing upstream.
      */
-    function LoomyCreditsBadge(props) {
-      var model = props.model;
+﻿    function LoomyCreditsBadge(props) {
+      var directory = props.directory;
+      var session = props.session === null || props.session === undefined ? NO_SESSION : props.session;
       var t = props.t;
+
+      // Track the session's model selection so the badge follows the picker;
+      // it renders only while a Loomy model is selected.
+      var subscribeDirectory = useCallback(
+        function (listener) {
+          return directory.subscribe(listener);
+        },
+        [directory]
+      );
+      var readDirectory = useCallback(
+        function () {
+          return directory.getSnapshot();
+        },
+        [directory]
+      );
+      var selection = useSyncExternalStore(subscribeDirectory, readDirectory, readDirectory);
+      var current = selection ? selection.current : null;
+      var isLoomyModel =
+        current !== null && current !== undefined && current.provider === LOOMY_PROVIDER;
+      var currentModelId = current === null || current === undefined ? null : current.model;
+
+      // Whether a turn is in flight. A turn ending is the cue to re-read the
+      // balance, so it stays current without polling.
+      var subscribeSession = useCallback(
+        function (listener) {
+          return session.subscribe(listener);
+        },
+        [session]
+      );
+      var readSession = useCallback(
+        function () {
+          return session.getSnapshot();
+        },
+        [session]
+      );
+      var sessionState = useSyncExternalStore(subscribeSession, readSession, readSession);
+      var running = sessionState ? sessionState.running === true : false;
+
       var creditsState = useState(null);
       var credits = creditsState[0];
       var setCredits = creditsState[1];
       var errorState = useState(null);
       var error = errorState[0];
       var setError = errorState[1];
+      var busyState = useState(false);
+      var busy = busyState[0];
+      var setBusy = busyState[1];
+      var refreshRef = useRef(null);
+      var wasRunningRef = useRef(running);
 
-      // Check if current model is free
-      var modelRate = model ? model.rate : undefined;
-      var isFreeModel = modelRate === 0 || modelRate === undefined;
-
-      useEffect(function () {
-        var isCancelled = false;
-
-        async function queryOnce() {
-          var result = await fetchCredits();
-
-          if (isCancelled) return;
-
-          if (result.error) {
-            setError(result.error);
+      // One read on mount, and again whenever the selected model changes.
+      useEffect(
+        function () {
+          if (!isLoomyModel) {
             setCredits(null);
-          } else {
-            setCredits(result);
             setError(null);
+            return undefined;
           }
-        }
 
-        queryOnce();
+          var controller = new AbortController();
+          var cancelled = false;
 
-        // Only set up interval for paid models
-        if (!isFreeModel) {
-          var interval = setInterval(queryOnce, 5 * 60 * 1000);
+          function read() {
+            setBusy(true);
+            fetchCredits(controller.signal)
+              .then(function (result) {
+                if (cancelled) return;
+                if (result.error) {
+                  setError(result.error);
+                  setCredits(null);
+                } else {
+                  setCredits(result);
+                  setError(null);
+                }
+                setBusy(false);
+              })
+              .catch(function () {
+                if (cancelled) return;
+                setBusy(false);
+              });
+          }
+
+          refreshRef.current = read;
+          read();
 
           return function () {
-            isCancelled = true;
-            clearInterval(interval);
+            cancelled = true;
+            refreshRef.current = null;
+            controller.abort();
           };
-        }
+        },
+        [isLoomyModel, currentModelId]
+      );
 
-        return function () {
-          isCancelled = true;
-        };
-      }, [isFreeModel]);
+      // A finished turn is the only automatic re-read: every status GET also
+      // bills upstream, so the balance must never refresh on a timer.
+      useEffect(
+        function () {
+          var wasRunning = wasRunningRef.current;
+          wasRunningRef.current = running;
+          if (!isLoomyModel) return;
+          if (wasRunning && !running && refreshRef.current !== null) refreshRef.current();
+        },
+        [running, isLoomyModel]
+      );
 
-      // Free model: show "免费" badge, no polling
-      if (isFreeModel && credits) {
-        return React.createElement(
-          "div",
-          { style: freeBadgeStyle },
-          React.createElement("span", { style: creditsValueStyle }, t ? t("freeModel") : "免费")
-        );
+﻿      // Hidden unless the current model belongs to Loomy.
+      if (!isLoomyModel) return null;
+
+      // The badge is itself the refresh control: clicking it re-reads the balance.
+      function refresh() {
+        if (refreshRef.current !== null) refreshRef.current();
       }
+
+      var seatStyle = busy ? busyBadgeStyle : creditsBadgeStyle;
 
       // Loading state
       if (!credits && !error) {
         return React.createElement(
-          "div",
-          { style: creditsBadgeStyle },
-          React.createElement("span", { style: creditsLabelStyle }, t ? t("credits") : "积分"),
+          "button",
+          {
+            type: "button",
+            onClick: refresh,
+            disabled: busy,
+            title: "正在读取 loomy 积分",
+            "aria-label": "刷新 loomy 积分",
+            style: seatStyle,
+          },
+          React.createElement("span", { style: creditsLabelStyle }, "loomy"),
           React.createElement("span", { style: creditsValueStyle }, "...")
         );
       }
@@ -183,23 +253,41 @@ window.__ModuleLoader__.load({
       // Error state
       if (error) {
         return React.createElement(
-          "div",
-          { style: errorBadgeStyle, title: error },
-          React.createElement("span", { style: creditsLabelStyle }, t ? t("creditsError") : "积分错误"),
-          React.createElement(
-            "span",
-            { style: creditsValueStyle },
-            error.length > 20 ? error.slice(0, 20) + "..." : error
-          )
+          "button",
+          {
+            type: "button",
+            onClick: refresh,
+            disabled: busy,
+            title: error + "（点击重试）",
+            "aria-label": "刷新 loomy 积分",
+            style: seatStyle,
+          },
+          React.createElement("span", { style: creditsLabelStyle }, "loomy"),
+          React.createElement("span", { style: creditsValueStyle }, "积分读取失败")
         );
       }
 
-      // Success state (paid model)
+      // Success state: loomy 永久{permanent} 赠送{daily}
       return React.createElement(
-        "div",
-        { style: creditsBadgeStyle, title: "永久积分: " + credits.permanent + ", 每日赠送: " + credits.daily },
-        React.createElement("span", { style: creditsLabelStyle }, t ? t("credits") : "积分"),
-        React.createElement("span", { style: creditsValueStyle }, credits.total)
+        "button",
+        {
+          type: "button",
+          onClick: refresh,
+          disabled: busy,
+          title:
+            "loomy 永久 " +
+            credits.permanent +
+            "，赠送 " +
+            credits.daily +
+            "，合计 " +
+            credits.total +
+            "（点击刷新）",
+          "aria-label": "刷新 loomy 积分",
+          style: seatStyle,
+        },
+        React.createElement("span", { style: creditsLabelStyle }, "loomy"),
+        React.createElement("span", { style: creditsValueStyle }, "永久" + credits.permanent),
+        React.createElement("span", { style: creditsValueStyle }, "赠送" + credits.daily)
       );
     }
     //#endregion
@@ -209,7 +297,7 @@ window.__ModuleLoader__.load({
      * Register the conversation.input.right slot.
      */
     function apply(ctx) {
-      ctx.inject(["modelDirectories"], function (scope) {
+      ctx.inject(["modelDirectories", "sessions"], function (scope) {
         scope.slots.inject("conversation.input.right", function () {
           return scope.slots.register(
             {
@@ -217,10 +305,18 @@ window.__ModuleLoader__.load({
               id: "loomy-credits",
               order: 10,
               inject: function (sessionId) {
-                var directory = scope.modelDirectories.directoryFor(sessionId).store;
-                var currentModel = directory.current;
+                // The Session binding carries the running flag the badge watches
+                // for a finished turn; a missing binding only costs that cue.
+                var session = null;
+                try {
+                  var binding = scope.sessions.binding(sessionId);
+                  if (binding !== undefined && binding !== null) session = binding.session;
+                } catch (_error) {
+                  session = null;
+                }
                 return {
-                  model: currentModel,
+                  directory: scope.modelDirectories.directoryFor(sessionId).store,
+                  session: session,
                   t: null,
                 };
               },
@@ -232,6 +328,13 @@ window.__ModuleLoader__.load({
     }
     //#endregion
 
+    /**
+     * Client services this bundle needs. Without an exported `inject`, `ctx.slots`
+     * is not wired up and every `slots.inject(...)` below silently never fires.
+     */
+    var inject = ["slots"];
+
+    exports.inject = inject;
     exports.apply = apply;
     return module.exports;
   },
