@@ -44,7 +44,7 @@
 ```jsonc
 {
   "dependencies": {
-    "loomy-to-dsh": "file:D:/0data/0dsh/loomy-to-dsh"
+    "loomy-to-dsh": "file:<你的路径>/loomy-to-dsh"
   },
   "dsh": {
     "profile": {
@@ -58,7 +58,7 @@
 }
 ```
 
-**Desktop profile**（`C:\Users\<你>\.dsh\profiles\desktop\package.json`）：在现有 `dependencies` 里加 `"loomy-to-dsh": "file:D:/0data/0dsh/loomy-to-dsh"`，并在 `dsh.profile.bundles` 数组末尾追加 `"loomy-to-dsh"`。
+**Desktop profile**（`C:\Users\<你>\.dsh\profiles\desktop\package.json`）：在现有 `dependencies` 里加 `"loomy-to-dsh": "file:<你的路径>/0dsh/loomy-to-dsh"`，并在 `dsh.profile.bundles` 数组末尾追加 `"loomy-to-dsh"`。
 
 然后在对应 profile 目录跑一次安装并重启界面：
 
