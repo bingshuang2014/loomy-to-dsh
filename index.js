@@ -236,7 +236,7 @@ export function apply(ctx, config) {
     try {
       await shim.ready
     } catch (error) {
-      ctx.logger.error('dsh-loomy-connect: loopback endpoint failed to start', error)
+      ctx.logger.error('loomy-to-dsh: loopback endpoint failed to start', error)
       return
     }
     try {
@@ -259,7 +259,7 @@ export function apply(ctx, config) {
             releaseAdapter()
             shim.close()
           },
-          'dsh-loomy-connect: adapter + shim',
+          'loomy-to-dsh: adapter + shim',
         )
       } catch {
         releaseAdapter()
@@ -269,7 +269,7 @@ export function apply(ctx, config) {
       // Reveal the group for whatever sign-in state is current.
       void adoptIdentity()
     } catch (error) {
-      ctx.logger.error('dsh-loomy-connect: provider registration failed', error)
+      ctx.logger.error('loomy-to-dsh: provider registration failed', error)
       void shim.close()
     }
   })()
@@ -295,7 +295,7 @@ export function apply(ctx, config) {
     () => () => {
       clearInterval(timer)
     },
-    'dsh-loomy-connect: session poll',
+    'loomy-to-dsh: session poll',
   )
 
   // Same-origin status route; the webServer service is optional (a headless
@@ -303,7 +303,7 @@ export function apply(ctx, config) {
   ctx.inject(['webServer'], (webCtx) => {
     registerLoomyStatusRoute(webCtx, {
       version: LOOMY_CONNECT_VERSION,
-      path: '/plugins/dsh-loomy-connect/status',
+      path: '/loomy-to-dsh/status',
       session: () => {
         const snapshot = store.current()
         if (snapshot === undefined) return undefined

@@ -7,9 +7,9 @@
  * @module dsh-loomy-connect/status-route
  */
 
-import { readFileSync, existsSync } from 'fs'
-import { join } from 'path'
-import { homedir } from 'os'
+import { readFileSync, existsSync } from 'node:fs'
+import { join } from 'node:path'
+import { homedir } from 'node:os'
 
 /** Loopback hostnames the status route trusts (same as the shim's gate). */
 const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]'])
@@ -64,7 +64,7 @@ export async function loomyWebStatus(deps) {
   const credits = creditsError ? null : creditsResult
 
   return {
-    plugin: 'dsh-loomy-connect',
+    plugin: 'loomy-to-dsh',
     version: deps.version,
     provider: 'loomy',
     signedIn: session !== undefined,
@@ -189,7 +189,7 @@ export function loomyStatusHandler(deps) {
 
 /** Mount the GET status route on a webServer context. */
 export function registerLoomyStatusRoute(ctx, deps) {
-  const path = deps.path ?? '/plugins/dsh-loomy-connect/status'
+  const path = deps.path ?? '/loomy-to-dsh/status'
   ctx.effect(
     () => {
       const dispose = ctx.webServer.register({
@@ -201,6 +201,6 @@ export function registerLoomyStatusRoute(ctx, deps) {
         dispose()
       }
     },
-    'dsh-loomy-connect: Web status route',
+    'loomy-to-dsh: Web status route',
   )
 }

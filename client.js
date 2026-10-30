@@ -19,7 +19,7 @@ window.__ModuleLoader__.load({
     var useState = React.useState;
     var useEffect = React.useEffect;
 
-    var LOOMY_STATUS_PATH = "/plugins/dsh-loomy-connect/status";
+    var LOOMY_STATUS_PATH = "/loomy-to-dsh/status";
 
     //#region styles
     var creditsBadgeStyle = {

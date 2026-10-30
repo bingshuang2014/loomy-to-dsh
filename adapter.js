@@ -37,7 +37,7 @@ const INERT_AUTH = {
       return []
     },
     async modify() {
-      throw new Error('dsh-loomy-connect: the loomy route has no pi-ai credential lifecycle')
+      throw new Error('loomy-to-dsh: the loomy route has no pi-ai credential lifecycle')
     },
     async delete() {},
   },
@@ -229,7 +229,7 @@ export function createLoomyAdapter(options) {
     provider: providerId,
     displayName,
     streamIdleTimeoutMs: LOOMY_STREAM_IDLE_TIMEOUT_MS,
-    retryPolicy: resolveRetryPolicy(undefined, 'dsh-loomy-connect retryPolicy'),
+    retryPolicy: resolveRetryPolicy(undefined, 'loomy-to-dsh retryPolicy'),
     configuredMaxTokens: new Map(),
     modelErrors: new Map(),
     ...REQUEST_IMAGE_BUDGETS,

@@ -111,7 +111,7 @@ export function createLoomyShim({ store, client, catalog, logger } = {}) {
   const ready = bindToUsablePort(server, {
     host: '127.0.0.1',
     onBlockedPort: (port, attempt) => {
-      log?.warn(`dsh-loomy-connect: port ${port} is blocked for fetch; rebinding (attempt ${attempt})`)
+      log?.warn(`loomy-to-dsh: port ${port} is blocked for fetch; rebinding (attempt ${attempt})`)
     },
   }).then(() => undefined)
 
@@ -221,7 +221,7 @@ export function createLoomyShim({ store, client, catalog, logger } = {}) {
       if (chunk instanceof Buffer && chunk.includes('[DONE]')) sawDone = true
     })
     body.on('error', (error) => {
-      log?.warn('dsh-loomy-connect: upstream stream failed mid-flight', error)
+      log?.warn('loomy-to-dsh: upstream stream failed mid-flight', error)
       if (!sawDone && res.writable) res.end('data: [DONE]\n\n')
     })
     body.pipe(res)
