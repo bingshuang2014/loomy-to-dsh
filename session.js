@@ -5,7 +5,7 @@
  * Loomy stores its login as a plaintext JSON file (unlike WorkBuddy, whose
  * credentials are sealed), so this plugin reads it directly and never starts
  * its own auth flow. The session token is the *only* credential the plugin
- * ever needs: it authenticates every request to loomyad.xunfei.cn as the
+ * ever needs: it authenticates every request to the upstream as the
  * signed-in user.
  *
  * Layout observed on Windows (Loomy 0.9.38):

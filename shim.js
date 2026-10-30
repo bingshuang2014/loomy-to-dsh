@@ -2,7 +2,7 @@
  * Loopback OpenAI-compatible endpoint. The pi-ai provider points here; the
  * shim applies the Loomy wire quirks (the `token`/`TurnId`/`traceparent`/
  * `loomy-version` headers, the `chat.message` request purpose) and forwards
- * to the real upstream at loomyad.xunfei.cn.
+ * to the real upstream.
  *
  * It binds 127.0.0.1 only and never serves another interface.
  *

@@ -27,13 +27,11 @@ TurnId: <UUID>  // ← 这是关键！只发 ChatId+MsgId 会 400
 **验证命令**：
 ```bash
 # 不带 TurnId（会 400）
-curl -X POST https://loomyad.xunfei.cn/api/v1/chat/completions \
   -H "Authorization: Bearer <session>" \
   -H "Content-Type: application/json" \
   -d '{"model":"DeepSeek-V4.1-Flash","messages":[...]}'
 
 # 带 TurnId（200 OK）
-curl -X POST https://loomyad.xunfei.cn/api/v1/chat/completions \
   -H "Authorization: Bearer <session>" \
   -H "Content-Type: application/json" \
   -H "TurnId: $(uuidgen)" \
@@ -172,7 +170,7 @@ autoInstallPeers: false
 **验证**：
 ```bash
 # 对比 workbuddy 的 package.json
-node -e "const p=require('C:/Users/12973/.dsh/profiles/desktop/node_modules/dsh-workbuddy-connect/package.json'); console.log(p.peerDependencies)"
+node -e "const p=require('C:/Users/<你>/.dsh/profiles/desktop/node_modules/dsh-workbuddy-connect/package.json'); console.log(p.peerDependencies)"
 # 输出：undefined（workbuddy 也没有 peerDependencies）
 ```
 
@@ -242,7 +240,7 @@ $nm = "C:\Users\<你>\.dsh\profiles\desktop\node_modules"
 robocopy "D:\<你的路径>\0dsh\loomy-to-dsh"    "$nm\loomy-to-dsh"    /MIR /XD research /XF diag.mjs
 
 # 3. 校验
-node -e "const p=require('C:/Users/12973/.dsh/profiles/desktop/node_modules/loomy-to-dsh/package.json');console.log(JSON.stringify(p.dsh))"
+node -e "const p=require('C:/Users/<你>/.dsh/profiles/desktop/node_modules/loomy-to-dsh/package.json');console.log(JSON.stringify(p.dsh))"
 ```
 
 ### 验证完整性

@@ -68,6 +68,6 @@ test('classifyUpstreamError detects credit exhaustion from the body', () => {
 
 test('resolveBaseUrl prefers an explicit value and strips trailing slashes', () => {
   assert.equal(resolveBaseUrl({ baseUrl: 'https://example.com/api/v1///' }), 'https://example.com/api/v1')
-  assert.equal(resolveBaseUrl({}), 'https://loomyad.xunfei.cn/api/v1')
-  assert.equal(resolveBaseUrl({ baseUrl: 'not-a-url' }), 'https://loomyad.xunfei.cn/api/v1')
+  assert.equal(resolveBaseUrl({}), 'https://api.example.com/v1')
+  assert.equal(resolveBaseUrl({ baseUrl: 'not-a-url' }), 'https://api.example.com/v1')
 })

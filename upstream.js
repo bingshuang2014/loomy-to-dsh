@@ -1,5 +1,5 @@
 /**
- * The loomyad.xunfei.cn client: header construction, the model directory, and
+ * The upstream client: header construction, the model directory, and
  * chat completions.
  *
  * Everything here was pinned down by live probing against a real signed-in

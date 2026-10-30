@@ -9,7 +9,7 @@
  *
  * Architecture mirrors dsh-workbuddy-connect (one loopback shim + one pi-ai
  * adapter registered into the `llm` seam), specialised to Loomy's plaintext
- * session and the loomyad.xunfei.cn wire quirks.
+ * session and the upstream wire quirks.
  *
  * @module loomy-to-dsh
  */
@@ -55,7 +55,7 @@ export const Config = z.object({
   /** Explicit upstream base URL. Overrides opencode.json. */
   baseUrl: z
     .string()
-    .description('Upstream base URL; overrides opencode.json (defaults to https://loomyad.xunfei.cn/api/v1)')
+    .description('Upstream base URL; overrides opencode.json (defaults to https://api.example.com/v1)')
     .default(''),
   /** How often, in ms, the session file is re-checked for a sign-in change. */
   pollMs: z

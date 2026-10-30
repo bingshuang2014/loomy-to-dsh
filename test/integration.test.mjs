@@ -1,6 +1,6 @@
 /**
  * End-to-end integration check: start the real loopback shim pointed at the
- * live loomyad.xunfei.cn, send one tiny chat completion through it, and assert
+ * live upstream, send one tiny chat completion through it, and assert
  * the SSE/non-stream response comes back as a 200 OpenAI completion.
  *
  * Skipped unless LOOMY_INTEGRATION=1: it consumes the signed-in account's real
