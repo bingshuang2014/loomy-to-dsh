@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 /** The plugin's own version, mirrored from package.json. */
-export const LOOMY_CONNECT_VERSION = '0.1.0'
+export const LOOMY_CONNECT_VERSION = '0.2.0'
 
 /** Stable provider id the plugin owns in the DSH model registry. */
 export const LOOMY_PROVIDER = 'loomy'
