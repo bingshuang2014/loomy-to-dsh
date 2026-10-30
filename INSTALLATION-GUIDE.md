@@ -117,7 +117,6 @@ Get-ChildItem C:\Users\<你>\.dsh\profiles\desktop\node_modules\@deepseek-ai
 
 **症状**：
 ```
-ENOENT ENOENT: no such file or directory, scandir 'C:\Users\<你>\.dsh\profiles\desktop\D:\<你的路径>\0dsh\bobcfcAgents\plugin'
 ```
 
 **根因**：pnpm 10.33 在 Windows 上把 `file:D:/path` 当成相对路径，拼到 cwd 后面。
@@ -240,7 +239,6 @@ $nm = "C:\Users\<你>\.dsh\profiles\desktop\node_modules"
 
 # 1. 修复 package.json（加 dsh 字段）
 # 2. 直接复制到 node_modules（模拟 hoisted linker 结果）
-robocopy "D:\<你的路径>\0dsh\bobcfcAgents\plugin" "$nm\dsh-bobcfc-agents" /MIR /NFL /NDL /NJH /NJS /NP
 robocopy "D:\<你的路径>\0dsh\loomy-to-dsh"    "$nm\loomy-to-dsh"    /MIR /XD research /XF diag.mjs
 
 # 3. 校验
@@ -282,7 +280,6 @@ node -e "import z from '@deepseek-ai/schemastery';console.log('z.object:',typeof
 
 ### Step 3：对齐插件包格式（包结构层）
 
-- 对照 4 个已装插件的 package.json（workbuddy / bobcfc / cockpit / dsh-browser）
 - 逐字段对比：`dsh` / `exports` / `dependencies` / `peerDependencies`
 - 确认 `cordis.patch.yml` 格式（`insert:` 包装）
 
@@ -338,7 +335,6 @@ node -e "import z from '@deepseek-ai/schemastery';console.log('z.object:',typeof
 - [ ] `node_modules\loomy-to-dsh\package.json` 有 `dsh` 字段
 - [ ] `node_modules\@earendil-works\pi-ai\package.json` 存在（1.3.0）
 - [ ] `node_modules\@deepseek-ai\schemastery\package.json` 存在
-- [ ] 其他插件未丢失（workbuddy / bobcfc / cockpit 等都在）
 
 ### 重启后
 
@@ -354,14 +350,11 @@ node -e "import z from '@deepseek-ai/schemastery';console.log('z.object:',typeof
 ```powershell
 $nm = "C:\Users\<你>\.dsh\profiles\desktop\node_modules"
 
-# bobcfc
-robocopy "D:\<你的路径>\0dsh\bobcfcAgents\plugin" "$nm\dsh-bobcfc-agents" /MIR /NFL /NDL /NJH /NJS /NP
 
 # loomy
 robocopy "D:\<你的路径>\0dsh\loomy-to-dsh" "$nm\loomy-to-dsh" /MIR /XD research /XF diag.mjs /NFL /NDL /NJH /NJS /NP
 
 # 验证
-Get-ChildItem $nm | Where-Object { $_.Name -in 'dsh-bobcfc-agents','loomy-to-dsh','dsh-workbuddy-connect' } | Select-Object Name
 ```
 
 **备份位置**：`C:\Users\<你>\.dsh\profiles\desktop\.backup-loomy-20261021-162104\`

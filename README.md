@@ -28,7 +28,7 @@
 
 ## 为什么是纯 JS 而不是 TS
 
-参照 `dsh-bobcfc-agents`（本机已装的 `file:` 依赖插件）：纯 ESM JavaScript、零构建步骤、`node --test` 跑测试。这样安装只需把目录丢进 profile 的 `dependencies`，不会卡在装不上的 peer 类型解析或 generation 校验上。运行时导入的 `@deepseek-ai/dsh-llm`、`@deepseek-ai/dsh-llm-pi-ai`、`@earendil-works/pi-ai` 由宿主 profile 的 `node_modules` 解析，与 `dsh-workbuddy-connect` 编译产物用的是同一套接缝。
+参照同类 DSH 插件的惯例：纯 ESM JavaScript、零构建步骤、`node --test` 跑测试。这样安装只需把目录丢进 profile 的 `dependencies`，不会卡在装不上的 peer 类型解析或 generation 校验上。运行时导入的 `@deepseek-ai/dsh-llm`、`@deepseek-ai/dsh-llm-pi-ai`、`@earendil-works/pi-ai` 由宿主 profile 的 `node_modules` 解析，与 `dsh-workbuddy-connect` 编译产物用的是同一套接缝。
 
 ## 前置
 
@@ -37,7 +37,7 @@
 
 ## 安装（本地 `file:` 依赖，推荐）
 
-在 DSH profile 的 `package.json` 里加一行 `file:` 依赖，和 `dsh-bobcfc-agents` 的装法一样。
+在 DSH profile 的 `package.json` 里加一行 `file:` 依赖，和同类 DSH 插件的装法一样。
 
 **Web profile**（`C:\Users\<你>\.dsh\profiles\web\package.json`）：
 
@@ -173,7 +173,7 @@ node --test "test/*.test.mjs"
 ## 致谢
 
 - [`dsh-workbuddy-connect`](https://github.com/corrinehu/dsh-workbuddy-connect)（MIT）—— 插件架构与 `pi-ai` adapter 注册方式的参照。
-- [`dsh-bobcfc-agents`](https://github.com/corrinehu/dsh-bobcfc-agents) —— 本地 `file:` 依赖插件的样板。
+- 同类 DSH 插件的 `file:` 依赖安装方式为样板。
 
 ## 许可证
 
