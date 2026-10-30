@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+
+# Build artifacts
+dist/
+build/
+*.tsbuildinfo
+
+# Runtime data
+*.log
+.loomy-catalog.json
+.loomy-visibility.json
+
+# Temporary files
+*.tmp
+.pnpm-*
+.pnpm-spec-test*
+diag.mjs
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Research/debug
+research/
+captures/
+
+# Local backups
+.bak-*/
