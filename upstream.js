@@ -17,7 +17,7 @@
  *    "挂死直到超时" without it; a probe without it returned 200 in 1.2s. The
  *    plugin still sends it, because it is free and may matter for other routes.
  *
- * @module dsh-loomy-connect/upstream
+ * @module loomy-to-dsh/upstream
  */
 
 import { randomBytes } from 'node:crypto'

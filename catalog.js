@@ -17,7 +17,7 @@
  * and are dropped here — DSH models on this provider must be chat models.
  * The `auto` row has no limits and is a routing hint, not a selectable model.
  *
- * @module dsh-loomy-connect/catalog
+ * @module loomy-to-dsh/catalog
  */
 
 import { readFileSync, writeFileSync, mkdirSync, renameSync } from 'node:fs'

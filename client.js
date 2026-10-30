@@ -10,7 +10,7 @@
  *   finishes, and on the ↻ beside the badge — never on a timer: every status
  *   GET also bills upstream, so the balance must not refresh behind the user.
  *
- * @module dsh-loomy-connect/client
+ * @module loomy-to-dsh/client
  */
 
 window.__ModuleLoader__.load({

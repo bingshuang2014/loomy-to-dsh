@@ -3,7 +3,7 @@
  * Both the inbound gates and the port selection exist because the shim is
  * only ever meant to be addressed through the machine's loopback interface.
  *
- * @module dsh-loomy-connect/loopback
+ * @module loomy-to-dsh/loopback
  */
 
 /** Loopback hostnames a local plugin surface may be addressed by. */

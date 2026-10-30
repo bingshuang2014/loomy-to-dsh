@@ -4,7 +4,7 @@
  * the live sign-in, the catalog source, and the served models — never the
  * session token itself.
  *
- * @module dsh-loomy-connect/status-route
+ * @module loomy-to-dsh/status-route
  */
 
 import { readFileSync, existsSync } from 'node:fs'

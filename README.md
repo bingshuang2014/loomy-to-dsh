@@ -1,4 +1,4 @@
-# dsh-loomy-connect
+# loomy-to-dsh
 
 将讯飞 **Loomy** 桌面 App 已登录账号可用的模型零配置接入 **DeepSeek Harness**：装上插件、重启界面，模型选择器里出现「Loomy」分组，直接可用，无需二次登录。
 
@@ -36,21 +36,21 @@
 ```jsonc
 {
   "dependencies": {
-    "dsh-loomy-connect": "file:D:/0data/0dsh/dsh-loomy-connect"
+    "loomy-to-dsh": "file:D:/0data/0dsh/loomy-to-dsh"
   },
   "dsh": {
     "profile": {
       "bundles": [
         "@deepseek-ai/dsh-base",
         "@deepseek-ai/dsh-web-app",
-        "dsh-loomy-connect"
+        "loomy-to-dsh"
       ]
     }
   }
 }
 ```
 
-**Desktop profile**（`C:\Users\<你>\.dsh\profiles\desktop\package.json`）：在现有 `dependencies` 里加 `"dsh-loomy-connect": "file:D:/0data/0dsh/dsh-loomy-connect"`，并在 `dsh.profile.bundles` 数组末尾追加 `"dsh-loomy-connect"`。
+**Desktop profile**（`C:\Users\<你>\.dsh\profiles\desktop\package.json`）：在现有 `dependencies` 里加 `"loomy-to-dsh": "file:D:/0data/0dsh/loomy-to-dsh"`，并在 `dsh.profile.bundles` 数组末尾追加 `"loomy-to-dsh"`。
 
 然后在对应 profile 目录跑一次安装并重启界面：
 
@@ -68,7 +68,7 @@ pnpm install
 
 1. 重启 DSH 界面后，模型选择器出现「Loomy」分组，列出 DeepSeek-V4.1-Flash 等模型（带积分倍率，如 `DeepSeek V4.1 Flash · ×2.0`）。
 2. 从分组里选一个模型，完成一次简短对话、能正常回复，才算成功。
-3. 状态接口（同源 GET）：浏览器里访问 `http://127.0.0.1:<dsh端口>/plugins/dsh-loomy-connect/status`，返回 JSON：`signedIn`、`account`、模型列表、目录来源（`live`/`saved`/`fallback`）、app 版本、baseURL。session 令牌只显示掩码（`f226…8c2`）。
+3. 状态接口（同源 GET）：浏览器里访问 `http://127.0.0.1:<dsh端口>/loomy-to-dsh/status`，返回 JSON：`signedIn`、`account`、模型列表、目录来源（`live`/`saved`/`fallback`）、app 版本、baseURL。session 令牌只显示掩码（`f226…8c2`）。
 
 ## 功能
 
@@ -89,7 +89,7 @@ pnpm install
 - **认证**：Cookie `loomy_web_session=xxx`（硬编码在 `status-route.js`，有效期至 2026-11-11）
 - **返回**：`{ permanent: 1000, daily: 4610, total: 5610 }`
 
-状态路由 `/plugins/dsh-loomy-connect/status` 返回的 `credits` 字段：
+状态路由 `/loomy-to-dsh/status` 返回的 `credits` 字段：
 
 ```json
 {

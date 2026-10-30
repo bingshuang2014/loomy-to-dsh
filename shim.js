@@ -13,7 +13,7 @@
  * Authorization header must carry the shim's per-process shared secret. The
  * plugin's own client satisfies all four by construction.
  *
- * @module dsh-loomy-connect/shim
+ * @module loomy-to-dsh/shim
  */
 
 import { randomBytes, timingSafeEqual } from 'node:crypto'

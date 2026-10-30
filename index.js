@@ -1,5 +1,5 @@
 /**
- * dsh-loomy-connect — bring the signed-in Loomy desktop app's models into
+ * loomy-to-dsh — bring the signed-in Loomy desktop app's models into
  * DeepSeek Harness with zero configuration.
  *
  * Registers one provider — `loomy` — whose models are served by a loopback
@@ -11,7 +11,7 @@
  * adapter registered into the `llm` seam), specialised to Loomy's plaintext
  * session and the loomyad.xunfei.cn wire quirks.
  *
- * @module dsh-loomy-connect
+ * @module loomy-to-dsh
  */
 
 import { join } from 'node:path'

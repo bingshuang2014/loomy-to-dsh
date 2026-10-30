@@ -6,7 +6,7 @@
  * for another: a signed-out or uid-less session has no account key, and the
  * store then refuses to read or write rather than sharing one bucket.
  *
- * @module dsh-loomy-connect/visibility
+ * @module loomy-to-dsh/visibility
  */
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync } from 'node:fs'

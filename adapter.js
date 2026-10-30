@@ -3,7 +3,7 @@
  * Harness LLM seam, assembled from public `dsh-llm-pi-ai` extension points the
  * way `dsh-workbuddy-connect` assembles its WorkBuddy route.
  *
- * @module dsh-loomy-connect/adapter
+ * @module loomy-to-dsh/adapter
  */
 
 import { createProvider } from '@earendil-works/pi-ai'

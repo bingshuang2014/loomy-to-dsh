@@ -1,7 +1,7 @@
-# DSH 插件安装调试经验（dsh-loomy-connect）
+# DSH 插件安装调试经验（loomy-to-dsh）
 
 **日期**：2026-10-21  
-**场景**：开发并安装 dsh-loomy-connect 插件，遇到 pnpm 安装失败、bundle 未加载等问题  
+**场景**：开发并安装 loomy-to-dsh 插件，遇到 pnpm 安装失败、bundle 未加载等问题  
 **结论**：插件已成功安装，模型选择器可见「Loomy」分组
 
 ---
@@ -124,13 +124,13 @@ ENOENT ENOENT: no such file or directory, scandir 'C:\Users\12973\.dsh\profiles\
 
 **解决**：改用反斜杠
 ```json
-"dsh-loomy-connect": "file:D:\\0data\\0dsh\\dsh-loomy-connect"
+"loomy-to-dsh": "file:D:\\0data\\0dsh\\loomy-to-dsh"
 ```
 
 **验证**：在 scratch 目录快速测试
 ```bash
 mkdir test && cd test
-'{"name":"t","dependencies":{"dsh-loomy-connect":"file:D:\\0data\\0dsh\\dsh-loomy-connect"}}' > package.json
+'{"name":"t","dependencies":{"loomy-to-dsh":"file:D:\\0data\\0dsh\\loomy-to-dsh"}}' > package.json
 pnpm install  # 成功
 ```
 
@@ -180,8 +180,8 @@ node -e "const p=require('C:/Users/12973/.dsh/profiles/desktop/node_modules/dsh-
 ### 问题 4（最关键）：package.json 缺少 `dsh.bundle.patch`
 
 **症状**：
-- bundles 数组里有 `dsh-loomy-connect`
-- node_modules 里有 `dsh-loomy-connect` 目录
+- bundles 数组里有 `loomy-to-dsh`
+- node_modules 里有 `loomy-to-dsh` 目录
 - 重启后模型选择器**没有「Loomy」分组**
 
 **根因**：package.json 里没有 `dsh` 字段：
@@ -201,7 +201,7 @@ node -e "const p=require('C:/Users/12973/.dsh/profiles/desktop/node_modules/dsh-
 **解决**：
 ```json
 {
-  "name": "dsh-loomy-connect",
+  "name": "loomy-to-dsh",
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
@@ -241,21 +241,21 @@ $nm = "C:\Users\12973\.dsh\profiles\desktop\node_modules"
 # 1. 修复 package.json（加 dsh 字段）
 # 2. 直接复制到 node_modules（模拟 hoisted linker 结果）
 robocopy "D:\0data\0dsh\bobcfcAgents\plugin" "$nm\dsh-bobcfc-agents" /MIR /NFL /NDL /NJH /NJS /NP
-robocopy "D:\0data\0dsh\dsh-loomy-connect"    "$nm\dsh-loomy-connect"    /MIR /XD research /XF diag.mjs
+robocopy "D:\0data\0dsh\loomy-to-dsh"    "$nm\loomy-to-dsh"    /MIR /XD research /XF diag.mjs
 
 # 3. 校验
-node -e "const p=require('C:/Users/12973/.dsh/profiles/desktop/node_modules/dsh-loomy-connect/package.json');console.log(JSON.stringify(p.dsh))"
+node -e "const p=require('C:/Users/12973/.dsh/profiles/desktop/node_modules/loomy-to-dsh/package.json');console.log(JSON.stringify(p.dsh))"
 ```
 
 ### 验证完整性
 
 ```powershell
 # 文件数对比
-(Get-ChildItem "D:\0data\0dsh\dsh-loomy-connect" -Recurse -File | Measure-Object).Count
-(Get-ChildItem "$nm\dsh-loomy-connect" -Recurse -File | Measure-Object).Count
+(Get-ChildItem "D:\0data\0dsh\loomy-to-dsh" -Recurse -File | Measure-Object).Count
+(Get-ChildItem "$nm\loomy-to-dsh" -Recurse -File | Measure-Object).Count
 
 # JSON 解析
-node -e "JSON.parse(require('fs').readFileSync('$nm/dsh-loomy-connect/package.json','utf8'));console.log('OK')"
+node -e "JSON.parse(require('fs').readFileSync('$nm/loomy-to-dsh/package.json','utf8'));console.log('OK')"
 
 # 导出符号验证（对实际装的包）
 cd $profile
@@ -301,7 +301,7 @@ node -e "import z from '@deepseek-ai/schemastery';console.log('z.object:',typeof
 ### Step 6：验证与回滚
 
 - 模型选择器看分组
-- 状态路由 `/plugins/dsh-loomy-connect/status` 看 JSON
+- 状态路由 `/loomy-to-dsh/status` 看 JSON
 - 导入符号对实际装的包验证（不是对我写的代码）
 - 保留备份目录，出问题立即还原
 
@@ -334,8 +334,8 @@ node -e "import z from '@deepseek-ai/schemastery';console.log('z.object:',typeof
 
 ### 安装后
 
-- [ ] `node_modules\dsh-loomy-connect` 存在，文件数一致
-- [ ] `node_modules\dsh-loomy-connect\package.json` 有 `dsh` 字段
+- [ ] `node_modules\loomy-to-dsh` 存在，文件数一致
+- [ ] `node_modules\loomy-to-dsh\package.json` 有 `dsh` 字段
 - [ ] `node_modules\@earendil-works\pi-ai\package.json` 存在（1.3.0）
 - [ ] `node_modules\@deepseek-ai\schemastery\package.json` 存在
 - [ ] 其他插件未丢失（workbuddy / bobcfc / cockpit 等都在）
@@ -345,7 +345,7 @@ node -e "import z from '@deepseek-ai/schemastery';console.log('z.object:',typeof
 - [ ] 模型选择器出现「Loomy」分组
 - [ ] 能选到 DeepSeek-V4.1-Flash / Kimi-k2.6 / GLM-5.3-Flash 等
 - [ ] 选一个模型能完成对话（流式/非流式）
-- [ ] 状态路由 `/plugins/dsh-loomy-connect/status` 返回 200 JSON
+- [ ] 状态路由 `/loomy-to-dsh/status` 返回 200 JSON
 
 ---
 
@@ -358,10 +358,10 @@ $nm = "C:\Users\12973\.dsh\profiles\desktop\node_modules"
 robocopy "D:\0data\0dsh\bobcfcAgents\plugin" "$nm\dsh-bobcfc-agents" /MIR /NFL /NDL /NJH /NJS /NP
 
 # loomy
-robocopy "D:\0data\0dsh\dsh-loomy-connect" "$nm\dsh-loomy-connect" /MIR /XD research /XF diag.mjs /NFL /NDL /NJH /NJS /NP
+robocopy "D:\0data\0dsh\loomy-to-dsh" "$nm\loomy-to-dsh" /MIR /XD research /XF diag.mjs /NFL /NDL /NJH /NJS /NP
 
 # 验证
-Get-ChildItem $nm | Where-Object { $_.Name -in 'dsh-bobcfc-agents','dsh-loomy-connect','dsh-workbuddy-connect' } | Select-Object Name
+Get-ChildItem $nm | Where-Object { $_.Name -in 'dsh-bobcfc-agents','loomy-to-dsh','dsh-workbuddy-connect' } | Select-Object Name
 ```
 
 **备份位置**：`C:\Users\12973\.dsh\profiles\desktop\.backup-loomy-20261021-162104\`

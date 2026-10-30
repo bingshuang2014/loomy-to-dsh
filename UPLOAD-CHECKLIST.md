@@ -53,10 +53,10 @@
 ### 1. 初始化 Git 仓库
 
 ```bash
-cd D:\0data\0dsh\dsh-loomy-connect
+cd D:\0data\0dsh\loomy-to-dsh
 git init
 git add .
-git commit -m "Initial release: dsh-loomy-connect v0.1.0
+git commit -m "Initial release: loomy-to-dsh v0.1.0
 
 - Bring Loomy desktop app models into DeepSeek Harness
 - Zero-config: reuses Loomy's on-disk session token
@@ -68,7 +68,7 @@ git commit -m "Initial release: dsh-loomy-connect v0.1.0
 ### 2. 创建 GitHub 仓库
 
 访问 https://github.com/new 创建新仓库：
-- **Repository name**: `dsh-loomy-connect`
+- **Repository name**: `loomy-to-dsh`
 - **Description**: Bring Loomy desktop app models into DeepSeek Harness
 - **Public**: 推荐公开（便于其他用户使用）
 - **License**: MIT（已在 LICENSE 文件）
@@ -77,14 +77,14 @@ git commit -m "Initial release: dsh-loomy-connect v0.1.0
 ### 3. 推送代码
 
 ```bash
-git remote add origin https://github.com/<你的用户名>/dsh-loomy-connect.git
+git remote add origin https://github.com/<你的用户名>/loomy-to-dsh.git
 git branch -M main
 git push -u origin main
 ```
 
 ### 4. 验证 CI
 
-推送后访问：`https://github.com/<你的用户名>/dsh-loomy-connect/actions`
+推送后访问：`https://github.com/<你的用户名>/loomy-to-dsh/actions`
 
 预期结果：
 - ✅ Node.js 22.x 测试通过
@@ -114,7 +114,7 @@ npm publish --access public
 ```
 
 **注意**：
-- npm 发布后，用户可以通过 `"dsh-loomy-connect": "^0.1.0"` 安装
+- npm 发布后，用户可以通过 `"loomy-to-dsh": "^0.1.0"` 安装
 - 但 **peer 依赖（`@deepseek-ai/dsh-llm` 等）仍需宿主提供**
 - 需要在 README 里说明：peer 依赖由 DSH profile 提供
 

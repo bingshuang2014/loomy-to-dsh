@@ -1,7 +1,7 @@
 /**
- * dsh-loomy-connect version constants and bundle-version helpers.
+ * loomy-to-dsh version constants and bundle-version helpers.
  *
- * @module dsh-loomy-connect/version
+ * @module loomy-to-dsh/version
  */
 
 import { dirname, join } from 'node:path'

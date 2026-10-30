@@ -18,7 +18,7 @@
  *
  *   { "session": "f226…", "userid": "…", "updatedAt": 1792558303462, "phone": "…" }
  *
- * @module dsh-loomy-connect/session
+ * @module loomy-to-dsh/session
  */
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
