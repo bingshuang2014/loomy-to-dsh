@@ -125,12 +125,12 @@ async function fetchCredits() {
       'mkHnfeu090Eol-m1c8NQH5WaUw01TdC4msa030I83xMTJ6MchHt1uT9ABOevJGbbdkt06a2VipYykJpc_eGklf8AzBWHptuAUNxU8ztk7u6D9PGwRysmOVKz3s0D8ktdXo1KRea0iOLTKXiot44X6NF6KDiWsl05yfV16lBIb7oucOlMHFhfMwsMc2NbwplGws1JMEXaWc1gMH0XQCgmKgMkrKRYPP4WRccQszrhfVItSbgG7q9zh2XGRjHQL0yPUqG7pD-mRgkMbm1Vqik-ze7T4tpg_A45qUI4Dul1mmzx'
   }
 
-  const url = 'https://api.example.com/credits'
+  const url = 'https://loomy.xunfei.cn/web/api/auth/points-summary'
 
   try {
     const response = await fetch(url, {
       headers: {
-        Cookie: `session_id=${cookieValue}`,
+        Cookie: `loomy_web_session=${cookieValue}`,
         Accept: 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       },

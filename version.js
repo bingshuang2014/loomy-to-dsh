@@ -24,7 +24,7 @@ export const LOOMY_IMODEL_PROVIDER = 'imodel'
 export const LOOMY_BASE_URL_ENV = 'LOOMY_BASE_URL'
 
 /** Default upstream base URL. */
-export const DEFAULT_LOOMY_BASE_URL = 'https://api.example.com/v1'
+export const DEFAULT_LOOMY_BASE_URL = 'https://loomyad.xunfei.cn/api/v1'
 
 /** Stream idle ceiling for one outstanding provider stream, in ms. */
 export const LOOMY_STREAM_IDLE_TIMEOUT_MS = 300_000
